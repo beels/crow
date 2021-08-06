@@ -180,7 +180,23 @@ uint8_t I2C_GetAddress( void )
 void I2C_SetAddress( uint8_t address )
 {
     i2c_handle.Init.OwnAddress1 = address << 1;
-    HAL_I2C_Init( &i2c_handle );
+
+    // Lifted from stm32f7xx_hal_i2c.c
+
+    /* Configure I2Cx: Own Address1 and ack own address1 mode */
+    if (i2c_handle.Init.AddressingMode == I2C_ADDRESSINGMODE_7BIT)
+    {
+      i2c_handle.Instance->OAR1 = ( I2C_OAR1_OA1EN
+                                  | i2c_handle.Init.OwnAddress1);
+    }
+    else /* I2C_ADDRESSINGMODE_10BIT */
+    {
+      i2c_handle.Instance->OAR1 = ( I2C_OAR1_OA1EN
+                                  | I2C_OAR1_OA1MODE
+                                  | i2c_handle.Init.OwnAddress1);
+    }
+
+    HAL_I2C_ListenCpltCallback( &i2c_handle ); // Re-enable Listen
 }
 
 
