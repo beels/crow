@@ -179,8 +179,12 @@ uint8_t I2C_GetAddress( void )
 
 void I2C_SetAddress( uint8_t address )
 {
-    i2c_handle.Init.OwnAddress1 = address << 1;
-    HAL_I2C_Init( &i2c_handle );
+    I2C_DeInit();
+    I2C_Init( address
+            , lead_response
+            , follow_action
+            , follow_request
+            , error_action);
 }
 
 
